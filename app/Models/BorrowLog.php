@@ -10,6 +10,7 @@ class BorrowLog extends Model
 
     protected $fillable = [
         'student_name',
+        'contact_info',
         'clinical_instructor',
         'procedure',
         'equipment',

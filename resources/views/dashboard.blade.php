@@ -101,4 +101,44 @@
         </div>
     </div>
 </div>
+
+<!-- Quick Actions & QR Code -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm col-span-1 lg:col-span-1 flex flex-col items-center text-center">
+        <h3 class="text-xl font-bold text-slate-800 mb-2">Borrow Equipment</h3>
+        <p class="text-sm text-slate-500 mb-6 max-w-xs">Scan the QR code below using your mobile device to easily fill up the borrowing form.</p>
+        
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6 inline-block" id="print-qrcode">
+            {!! \SimpleSoftwareIO\QrCode\Facades\QrCode::size(200)->style('round')->generate(rtrim(config('app.url'), '/') . '/borrow-equipment') !!}
+        </div>
+        
+        <div class="flex gap-3 w-full">
+            <a href="{{ route('borrow.create') }}" class="flex-1 py-2.5 px-4 bg-slate-50 hover:bg-slate-100 text-slate-600 font-medium rounded-xl border border-slate-200 transition-all text-sm">
+                Open Link
+            </a>
+            <button onclick="printQr()" class="flex-1 py-2.5 px-4 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-medium rounded-xl border border-indigo-100 transition-all flex items-center justify-center gap-2 text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                Print QR
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function printQr() {
+        var printContents = document.getElementById('print-qrcode').innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif;">' +
+            '<h1 style="margin-bottom: 2rem;">Scan to Borrow Equipment</h1>' +
+            printContents + 
+            '</div>';
+
+        window.print();
+
+        document.body.innerHTML = originalContents;
+        window.location.reload(); // Reload to restore event listeners
+    }
+</script>
+
 @endsection
