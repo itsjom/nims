@@ -32,7 +32,7 @@
                 </a>
                 <div class="space-y-1">
                     @php 
-                        $isInventory = request()->routeIs('fnp-materials.*') || request()->routeIs('ha-materials.*') || request()->routeIs('procedures.*'); 
+                        $isInventory = request()->routeIs('master-equipment.*') || request()->routeIs('fnp-materials.*') || request()->routeIs('ha-materials.*') || request()->routeIs('procedures.*'); 
                     @endphp
                     <button id="inventory-btn" class="w-full flex items-center justify-between px-4 py-3 {{ $isInventory ? 'text-indigo-700' : 'text-slate-600 hover:text-indigo-600' }} rounded-xl font-medium transition-all duration-300 group">
                         <div class="flex items-center">
@@ -43,7 +43,7 @@
                     </button>
                     <div id="inventory-submenu" class="pl-11 pr-4 space-y-1 overflow-hidden transition-all duration-300 {{ $isInventory ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0' }}">
                         <div class="py-1">
-                            <a href="#" class="block px-3 py-2 text-sm font-medium text-slate-500 hover:text-indigo-600 rounded-lg transition-colors">Master Equipment</a>
+                            <a href="{{ route('master-equipment.index') }}" class="block px-3 py-2 text-sm font-medium {{ request()->routeIs('master-equipment.*') ? 'text-indigo-700 bg-indigo-50' : 'text-slate-500 hover:text-indigo-600' }} rounded-lg transition-colors">Master Equipment</a>
                             <a href="{{ route('procedures.index') }}" class="block px-3 py-2 text-sm font-medium {{ request()->routeIs('procedures.*') ? 'text-indigo-700 bg-indigo-50' : 'text-slate-500 hover:text-indigo-600' }} rounded-lg transition-colors">Procedures</a>
                             <a href="{{ route('fnp-materials.index') }}" class="block px-3 py-2 text-sm font-medium {{ request()->routeIs('fnp-materials.*') ? 'text-indigo-700 bg-indigo-50' : 'text-slate-500 hover:text-indigo-600' }} rounded-lg transition-colors">FNP Materials</a>
                             <a href="{{ route('ha-materials.index') }}" class="block px-3 py-2 text-sm font-medium {{ request()->routeIs('ha-materials.*') ? 'text-indigo-700 bg-indigo-50' : 'text-slate-500 hover:text-indigo-600' }} rounded-lg transition-colors">HA Materials</a>

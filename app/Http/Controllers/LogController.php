@@ -10,7 +10,7 @@ class LogController extends Controller
 {
     public function borrowing()
     {
-        $logs = BorrowLog::orderByDesc('created_at')->get();
+        $logs = BorrowLog::orderBy('borrow_id', 'asc')->get();
         return view('logs.borrowing', compact('logs'));
     }
 
