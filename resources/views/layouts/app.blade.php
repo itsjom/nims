@@ -44,8 +44,8 @@
                     <div id="inventory-submenu" class="pl-11 pr-4 space-y-1 overflow-hidden transition-all duration-300 {{ $isInventory ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0' }}">
                         <div class="py-1">
                             <a href="{{ route('master-equipment.index') }}" class="block px-3 py-2 text-sm font-medium {{ request()->routeIs('master-equipment.*') ? 'text-green-700 bg-green-50' : 'text-slate-500 hover:text-green-600' }} rounded-lg transition-colors">Master Equipment</a>
-                            <a href="{{ route('csr-ncon-t1.index') }}" class="block px-3 py-2 text-sm font-medium {{ request()->routeIs('csr-ncon-t1.*') ? 'text-green-700 bg-green-50' : 'text-slate-500 hover:text-green-600' }} rounded-lg transition-colors">CSR-NCON-T1</a>
-                            <a href="{{ route('csr-con-t1.index') }}" class="block px-3 py-2 text-sm font-medium {{ request()->routeIs('csr-con-t1.*') ? 'text-green-700 bg-green-50' : 'text-slate-500 hover:text-green-600' }} rounded-lg transition-colors">CSR-CON-T1</a>
+                            <a href="{{ route('csr-ncon-t1.index') }}" class="block px-3 py-2 text-sm font-medium {{ request()->routeIs('csr-ncon-t1.*') ? 'text-green-700 bg-green-50' : 'text-slate-500 hover:text-green-600' }} rounded-lg transition-colors">CSR-NCON</a>
+                            <a href="{{ route('csr-con-t1.index') }}" class="block px-3 py-2 text-sm font-medium {{ request()->routeIs('csr-con-t1.*') ? 'text-green-700 bg-green-50' : 'text-slate-500 hover:text-green-600' }} rounded-lg transition-colors">CSR-CON</a>
                         </div>
                     </div>
                 </div>
