@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Http\Request;
 
 use App\Models\CsrNconT1;
 
 class CsrNconT1Controller extends Controller
 {
+    use HasFactory;
     public function index()
     {
         $items = CsrNconT1::all();
@@ -42,7 +44,7 @@ class CsrNconT1Controller extends Controller
     public function update(Request $request, $id)
     {
         $item = CsrNconT1::findOrFail($id);
-        
+
         $request->validate([
             'item_name' => 'required|string|max:255',
             'unit' => 'required|string|max:255',
@@ -70,7 +72,7 @@ class CsrNconT1Controller extends Controller
     {
         $item = CsrNconT1::findOrFail($id);
         $item->delete();
-        
+
         return redirect()->route('csr-ncon-t1.index')->with('success', 'Item deleted successfully.');
     }
 }

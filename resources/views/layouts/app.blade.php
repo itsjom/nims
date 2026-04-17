@@ -80,13 +80,21 @@
                 </a>
             </nav>
             <div class="p-6 border-t border-slate-100">
-                <div class="flex items-center gap-3 w-full cursor-pointer group">
-                    <img src="https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff" alt="User Avatar" class="w-10 h-10 rounded-full shadow-sm group-hover:ring-2 ring-green-200 transition-all">
+                <div class="flex items-center gap-3 w-full group">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name ?? 'Admin User') }}&background=16a34a&color=fff" alt="User Avatar" class="w-10 h-10 rounded-full shadow-sm group-hover:ring-2 ring-green-200 transition-all">
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-semibold text-slate-800 truncate">Admin User</p>
-                        <p class="text-xs text-slate-500 truncate">admin@MIIS.com</p>
+                        <p class="text-sm font-semibold text-slate-800 truncate">{{ auth()->user()->name ?? 'Admin User' }}</p>
+                        <p class="text-xs text-slate-500 truncate">{{ auth()->user()->email ?? 'admin@MIIS.com' }}</p>
                     </div>
                 </div>
+
+                <form method="POST" action="{{ route('logout') }}" class="mt-4">
+                    @csrf
+                    <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-xl transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        Logout
+                    </button>
+                </form>
             </div>
         </aside>
 

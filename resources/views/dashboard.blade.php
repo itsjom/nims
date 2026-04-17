@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div class="flex items-center text-xs">
-                    <span class="text-green-600 font-medium">FNP & HA Total</span>
+                    <span class="text-green-600 font-medium">CSR Total</span>
                 </div>
             </div>
         </div>

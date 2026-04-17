@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FnpMaterial;
-use App\Models\HaMaterial;
+use App\Models\CsrConT1;
+use App\Models\CsrNconT1;
 use App\Models\BorrowLog;
 use App\Models\ReturnLog;
 use Carbon\Carbon;
@@ -13,8 +13,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // 1. Total Equipments (FNP + HA Database count)
-        $totalEquipments = FnpMaterial::count() + HaMaterial::count();
+        // 1. Total Equipments (CSR-CON-T1 + CSR-NCON-T1 Database count)
+        $totalEquipments = CsrConT1::count() + CsrNconT1::count();
 
         // 2. Total Borrowed (Active items not returned, based on number of borrow transactions NOT total sum of quantity)
         $totalBorrowed = BorrowLog::where('status', '!=', 'Returned')->count();
@@ -29,7 +29,8 @@ class DashboardController extends Controller
             ->count();
 
         // 5. Damaged Items
-$damagedItems = ReturnLog::where('condition', 'damaged')->count();
+        $damagedItems = ReturnLog::whereRaw('LOWER(`condition`) = ?', ['damaged'])->count();
+
         return view('dashboard', compact(
             'totalEquipments',
             'totalBorrowed',

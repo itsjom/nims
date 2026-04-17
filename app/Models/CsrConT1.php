@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class CsrConT1 extends Model
 {
+    use HasFactory;
     protected $table = 'csr_con_t1s';
 
     protected $fillable = [
@@ -16,7 +18,7 @@ class CsrConT1 extends Model
         'total_stock',
         'supply_on_hand',
         'location',
-         'item_condition',
+        'item_condition',
         'expiration_date',
         'last_restock_date',
         'image',
