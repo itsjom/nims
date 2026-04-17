@@ -19,10 +19,20 @@
 
 <body class="antialiased text-slate-800 min-h-screen py-10 px-4 flex justify-center items-start">
 
-    <div class="max-w-xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 p-8">
+    <div class="max-w-xl w-full bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 p-8 relative">
 
+        <div class="absolute top-4 right-4 z-20">
+            <a href="{{ route('dashboard') }}"
+                class="p-2 bg-slate-50 hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-full transition-colors flex items-center justify-center">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </a>
+        </div>
         <div class="text-center mb-8">
-            <img src="{{ asset('images/ncf-logo.png') }}" alt="NCF Logo" class="w-16 h-16 mx-auto object-contain drop-shadow-sm mb-4">
+            <img src="{{ asset('images/ncf-logo.png') }}" alt="NCF Logo"
+                class="w-16 h-16 mx-auto object-contain drop-shadow-sm mb-4">
             <h1 class="text-3xl font-bold text-slate-800">Borrow Equipment</h1>
             <p class="text-sm text-slate-500 mt-2">Please fill out the form accurately to borrow items.</p>
         </div>
@@ -87,7 +97,7 @@
                 <select name="equipment_composite" id="equipment_select" required
                     class="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all bg-white mb-2">
                     <option value="" disabled selected>Select Equipment</option>
-                    <optgroup label="CSR-NCON-T1 Materials">
+                    <optgroup label="CSR-NCON Materials">
                         @foreach($nconMaterials as $ncon)
                             @php $availableNcon = $ncon->supply_on_hand; @endphp
                             <option value="NCON_{{ $ncon->id }}" {{ $availableNcon <= 0 ? 'disabled' : '' }}
@@ -96,7 +106,7 @@
                             </option>
                         @endforeach
                     </optgroup>
-                    <optgroup label="CSR-CON-T1 Materials">
+                    <optgroup label="CSR-CON Materials">
                         @foreach($conMaterials as $con)
                             @php $availableCon = $con->supply_on_hand; @endphp
                             <option value="CON_{{ $con->id }}" {{ $availableCon <= 0 ? 'disabled' : '' }}

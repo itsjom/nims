@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('header_title', 'CSR-NCON-T1 Materials')
+@section('header_title', 'CSR-NCON Materials')
 
 @section('content')
     <!-- Top Actions -->
@@ -86,8 +86,7 @@
                         <td class="px-6 py-4 text-slate-600 text-sm">{{ $item->location }}</td>
                         <td class="px-6 py-4">
                             @if($item->item_condition == 'New')
-                                <span
-                                    class="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">New</span>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">New</span>
                             @elseif($item->item_condition == 'Good')
                                 <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">Good</span>
                             @else
@@ -481,7 +480,7 @@
         const searchInput = document.getElementById('searchInput');
         const tableRows = document.querySelectorAll('#dataTable tr.group');
         if (searchInput) {
-            searchInput.addEventListener('keyup', function() {
+            searchInput.addEventListener('keyup', function () {
                 const filter = searchInput.value.toLowerCase();
                 tableRows.forEach(row => {
                     const text = row.textContent || row.innerText;
