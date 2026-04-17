@@ -364,13 +364,17 @@
                 @csrf
                 <div class="grid grid-cols-2 gap-4">
                     <div class="col-span-2">
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Item Name *</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Item Name
+                            <span class="text-red-500">*</span>
+                        </label>
                         <input type="text" name="item_name" required
                             class="seq-input-ncon w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Unit *</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Unit
+                            <span class="text-red-500">*</span>
+                        </label>
                         <select name="unit" required
                             class="seq-input-ncon w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors cursor-pointer">
                             <option value="" disabled selected>Select Unit</option>
@@ -399,7 +403,9 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Location *</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Location
+                            <span class="text-red-500">*</span>
+                        </label>
                         <select name="location" required
                             class="seq-input-ncon w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors cursor-pointer">
                             <option value="" disabled selected>Select Location</option>
@@ -425,25 +431,33 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Ideal Stocks *</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Ideal Stocks
+                            <span class="text-red-500">*</span>
+                        </label>
                         <input type="number" name="ideal_stocks" required min="0" value="0"
                             class="seq-input-ncon w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Total Stock *</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Total Stock
+                            <span class="text-red-500">*</span>
+                        </label>
                         <input type="number" name="total_stock" required min="0" value="0"
                             class="seq-input-ncon w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Supply On Hand *</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Supply On Hand
+                            <span class="text-red-500">*</span>
+                        </label>
                         <input type="number" name="supply_on_hand" required min="0" value="0"
                             class="seq-input-ncon w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Condition *</label>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Condition
+                            <span class="text-red-500">*</span>
+                        </label>
                         <select name="item_condition" required id="conditionSelectNcon"
                             onchange="if(this.value=='Others') { this.name=''; document.getElementById('conditionOtherNcon').name='item_condition'; document.getElementById('conditionOtherNcon').classList.remove('hidden'); document.getElementById('conditionOtherNcon').required=true; } else { this.name='item_condition'; document.getElementById('conditionOtherNcon').name=''; document.getElementById('conditionOtherNcon').classList.add('hidden'); document.getElementById('conditionOtherNcon').required=false; }"
                             class="seq-input-ncon w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors cursor-pointer">
