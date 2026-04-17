@@ -117,7 +117,7 @@
                                 </option>
                             @endforeach
                         </optgroup>
-                        <optgroup label="CSR-CON-T1 Materials">
+                        <optgroup label="CSR-CON Materials">
                             @foreach($conMaterials as $con)
                                 <option value="CON_{{ $con->id }}">
                                     {{ $con->item_name }} (Code: {{ $con->item_code }})
