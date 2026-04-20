@@ -156,8 +156,13 @@
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-1.5 ml-1">Received By <span
                         class="text-rose-500">*</span></label>
-                <input type="text" name="received_by" required placeholder="Staff or Instructor Name"
-                    class="w-full px-4 py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all shadow-sm">
+                <select name="received_by" required
+                    class="w-full px-4 py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all shadow-sm cursor-pointer">
+                    <option value="" disabled selected>Select Instructor</option>
+                    @foreach($clinicalInstructors as $ci)
+                        <option value="{{ $ci->name }}">{{ $ci->name }}</option>
+                    @endforeach
+                </select>
             </div>
 
             <div class="pt-4">

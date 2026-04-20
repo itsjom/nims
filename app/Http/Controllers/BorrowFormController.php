@@ -14,8 +14,9 @@ class BorrowFormController extends Controller
     {
         $nconMaterials = CsrNconT1::all();
         $conMaterials = CsrConT1::all();
+        $clinicalInstructors = \App\Models\ClinicalInstructor::all();
 
-        return view('borrow-form.create', compact('nconMaterials', 'conMaterials'));
+        return view('borrow-form.create', compact('nconMaterials', 'conMaterials', 'clinicalInstructors'));
     }
 
     public function store(Request $request)
@@ -24,54 +25,62 @@ class BorrowFormController extends Controller
             'student_name' => 'required|string|max:255',
             'contact_info' => 'required|string|max:255',
             'clinical_instructor' => 'required|string|max:255',
-            'equipment_type' => 'required|in:NCON,CON',
-            'equipment_id' => 'required|integer',
-            'quantity' => 'required|integer|min:1',
             'expected_returned_date' => 'required|date|after_or_equal:today',
+            'items' => 'required|array|min:1',
+            'items.*.equipment_composite' => 'required|string',
+            'items.*.quantity' => 'required|integer|min:1',
         ]);
 
-        $equipmentName = '';
+        $itemsToProcess = [];
 
-        if ($request->equipment_type === 'NCON') {
-            $material = CsrNconT1::findOrFail($request->equipment_id);
-            $available = $material->supply_on_hand;
-            
-            if ($request->quantity > $available) {
-                return back()->withErrors(['quantity' => 'Not enough items available. Only ' . $available . ' remaining for ' . $material->item_name . '.'])->withInput();
+        // Validation phase: check all items before saving any
+        foreach ($request->items as $index => $item) {
+            $parts = explode('_', $item['equipment_composite']);
+            if (count($parts) !== 2) {
+                return back()->withErrors(['items' => 'Invalid equipment selected.'])->withInput();
+            }
+            $type = $parts[0];
+            $id = $parts[1];
+            $qty = $item['quantity'];
+
+            if ($type === 'NCON') {
+                $material = CsrNconT1::findOrFail($id);
+            } else {
+                $material = CsrConT1::findOrFail($id);
             }
 
-            $equipmentName = $material->item_name;
-            
-            // Decrement supply_on_hand
-            $material->supply_on_hand -= $request->quantity;
-            $material->save();
-        } else {
-            $material = CsrConT1::findOrFail($request->equipment_id);
-            $available = $material->supply_on_hand;
-            
-            if ($request->quantity > $available) {
-                return back()->withErrors(['quantity' => 'Not enough items available. Only ' . $available . ' remaining for ' . $material->item_name . '.'])->withInput();
+            if ($qty > $material->supply_on_hand) {
+                return back()->withErrors(['items' => 'Not enough items available. Only ' . $material->supply_on_hand . ' remaining for ' . $material->item_name . '.'])->withInput();
             }
 
-            $equipmentName = $material->item_name;
-
-            // Decrement supply_on_hand
-            $material->supply_on_hand -= $request->quantity;
-            $material->save();
+            $itemsToProcess[] = [
+                'material' => $material,
+                'quantity' => $qty,
+                'name' => $material->item_name
+            ];
         }
 
-        // Save into BorrowLog
-        BorrowLog::create([
-            'student_name' => $request->student_name,
-            'contact_info' => $request->contact_info,
-            'clinical_instructor' => $request->clinical_instructor,
-            'procedure' => 'N/A', // Removed from form, keeping fallback for DB schema
-            'equipment' => $equipmentName,
-            'quantity' => $request->quantity,
-            'status' => 'Borrowed',
-            'date_borrowed' => Carbon::today(),
-            'expected_returned_date' => $request->expected_returned_date,
-        ]);
+        // Execution phase: decrement supply and create logs
+        foreach ($itemsToProcess as $item) {
+            $material = $item['material'];
+            
+            // Decrement supply_on_hand
+            $material->supply_on_hand -= $item['quantity'];
+            $material->save();
+
+            // Save into BorrowLog
+            BorrowLog::create([
+                'student_name' => $request->student_name,
+                'contact_info' => $request->contact_info,
+                'clinical_instructor' => $request->clinical_instructor,
+                'procedure' => 'N/A', // Removed from form, keeping fallback for DB schema
+                'equipment' => $item['name'],
+                'quantity' => $item['quantity'],
+                'status' => 'Borrowed',
+                'date_borrowed' => Carbon::today(),
+                'expected_returned_date' => $request->expected_returned_date,
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Borrow request submitted successfully!');
     }

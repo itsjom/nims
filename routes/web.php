@@ -31,9 +31,9 @@ Route::middleware(['auth', \App\Http\Middleware\PreventBackHistory::class])->gro
     Route::get('/logs/borrowing', [LogController::class, 'borrowing'])->name('logs.borrowing');
     Route::get('/logs/returned', [LogController::class, 'returned'])->name('logs.returned');
 
-    Route::get('/ci-monitoring', function() {
-        return view('ci-monitoring.index');
-    })->name('ci-monitoring.index');
+    Route::get('/ci-monitoring', [App\Http\Controllers\CiMonitoringController::class, 'index'])->name('ci-monitoring.index');
+    Route::post('/ci-monitoring', [App\Http\Controllers\CiMonitoringController::class, 'store'])->name('ci-monitoring.store');
+    Route::delete('/ci-monitoring/{id}', [App\Http\Controllers\CiMonitoringController::class, 'destroy'])->name('ci-monitoring.destroy');
 
     Route::get('/procedures', [ProcedureController::class, 'index'])->name('procedures.index');
     Route::post('/procedures', [ProcedureController::class, 'store'])->name('procedures.store');
@@ -49,4 +49,5 @@ Route::middleware(['auth', \App\Http\Middleware\PreventBackHistory::class])->gro
     Route::delete('/csr-con-t1/{id}', [CsrConT1Controller::class, 'destroy'])->name('csr-con-t1.destroy');
 
     Route::get('/master-equipment', [MasterEquipmentController::class, 'index'])->name('master-equipment.index');
+    Route::get('/master-equipment/print', [MasterEquipmentController::class, 'print'])->name('master-equipment.print');
 });

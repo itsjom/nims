@@ -12,11 +12,29 @@
         body { font-family: 'Outfit', sans-serif; background-color: #f3f4f6; }
         .sidebar-scroll::-webkit-scrollbar { width: 4px; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+        
+        @media print {
+            aside, header { display: none !important; }
+            .print\:hidden { display: none !important; }
+            body, .flex, main, .flex-1, .flex-col { 
+                height: auto !important; 
+                min-height: 0 !important;
+                overflow: visible !important; 
+                display: block !important; 
+                background: white !important;
+            }
+            .max-w-7xl { max-width: none !important; margin: 0 !important; }
+            .p-8 { padding: 0 !important; }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+        }
     </style>
 </head>
 <body class="antialiased text-slate-800">
-    <div class="flex h-screen overflow-hidden bg-slate-50">
-        <aside class="w-72 bg-white border-r border-slate-200 flex flex-col transition-all duration-300 z-20 shadow-sm relative">
+    <div class="flex h-screen overflow-hidden bg-slate-50 print:block print:h-auto print:overflow-visible print:bg-white">
+        <aside class="w-72 bg-white border-r border-slate-200 flex flex-col transition-all duration-300 z-20 shadow-sm relative print:hidden">
             <div class="h-20 flex items-center px-8 border-b border-slate-100">
                 <img src="{{ asset('images/ncf-logo.png') }}" alt="NCF Logo" class="w-12 h-12 object-contain drop-shadow-sm">
                 <span class="ml-4 text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-slate-800">MIIS</span>
@@ -98,8 +116,8 @@
             </div>
         </aside>
 
-        <main class="flex-1 flex flex-col relative overflow-hidden">
-            <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-8 z-10 sticky top-0">
+        <main class="flex-1 flex flex-col relative overflow-hidden print:overflow-visible">
+            <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-8 z-10 sticky top-0 print:hidden">
                 <div class="flex items-center space-x-4">
                     <h1 class="text-2xl font-bold text-slate-800 leading-tight">@yield('header_title', 'Dashboard')</h1>
                 </div>
@@ -111,7 +129,7 @@
                 </div>
             </header>
             
-            <div class="flex-1 overflow-auto p-8 bg-slate-50/50">
+            <div class="flex-1 overflow-auto p-8 bg-slate-50/50 print:overflow-visible print:p-0 print:bg-white">
                 <div class="max-w-7xl mx-auto">
                     @yield('content')
                 </div>

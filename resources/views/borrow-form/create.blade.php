@@ -88,62 +88,85 @@
 
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Clinical Instructor</label>
-                <input type="text" name="clinical_instructor" required placeholder="Instructor Name"
-                    class="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all">
+                <select name="clinical_instructor" required
+                    class="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all bg-white">
+                    <option value="" disabled selected>Select Instructor</option>
+                    @foreach($clinicalInstructors as $ci)
+                        <option value="{{ $ci->name }}">{{ $ci->name }}</option>
+                    @endforeach
+                </select>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Equipment</label>
-                <select name="equipment_composite" id="equipment_select" required
-                    class="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all bg-white mb-2">
-                    <option value="" disabled selected>Select Equipment</option>
-                    <optgroup label="CSR-NCON Materials">
-                        @foreach($nconMaterials as $ncon)
-                            @php $availableNcon = $ncon->supply_on_hand; @endphp
-                            <option value="NCON_{{ $ncon->id }}" {{ $availableNcon <= 0 ? 'disabled' : '' }}
-                                class="{{ $availableNcon <= 0 ? 'text-slate-300' : '' }}">
-                                {{ $ncon->item_name }} (Available: {{ $availableNcon }})
-                            </option>
-                        @endforeach
-                    </optgroup>
-                    <optgroup label="CSR-CON Materials">
-                        @foreach($conMaterials as $con)
-                            @php $availableCon = $con->supply_on_hand; @endphp
-                            <option value="CON_{{ $con->id }}" {{ $availableCon <= 0 ? 'disabled' : '' }}
-                                class="{{ $availableCon <= 0 ? 'text-slate-300' : '' }}">
-                                {{ $con->item_name }} (Available: {{ $availableCon }})
-                            </option>
-                        @endforeach
-                    </optgroup>
-                </select>
-                <!-- Hidden inputs to submit to standard controller methods -->
-                <input type="hidden" name="equipment_type" id="equipment_type">
-                <input type="hidden" name="equipment_id" id="equipment_id">
+            <div class="p-6 bg-slate-50 border border-slate-200 rounded-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Equipment Details</h3>
+                    <button type="button" id="add_item_btn" class="text-xs font-semibold text-green-600 hover:text-green-700 bg-green-100 hover:bg-green-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        Add Item
+                    </button>
+                </div>
+
+                <div id="items_container" class="space-y-4">
+                    <div class="item-row relative bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-medium text-slate-500 mb-1">Equipment</label>
+                                <select name="items[0][equipment_composite]" required
+                                    class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all bg-slate-50 hover:bg-white cursor-pointer">
+                                    <option value="" disabled selected>Select Equipment...</option>
+                                    <optgroup label="CSR-NCON Materials">
+                                        @foreach($nconMaterials as $ncon)
+                                            @php $availableNcon = $ncon->supply_on_hand; @endphp
+                                            <option value="NCON_{{ $ncon->id }}" {{ $availableNcon <= 0 ? 'disabled' : '' }}
+                                                class="{{ $availableNcon <= 0 ? 'text-slate-300' : '' }}">
+                                                {{ $ncon->item_name }} (Available: {{ $availableNcon }})
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
+                                    <optgroup label="CSR-CON Materials">
+                                        @foreach($conMaterials as $con)
+                                            @php $availableCon = $con->supply_on_hand; @endphp
+                                            <option value="CON_{{ $con->id }}" {{ $availableCon <= 0 ? 'disabled' : '' }}
+                                                class="{{ $availableCon <= 0 ? 'text-slate-300' : '' }}">
+                                                {{ $con->item_name }} (Available: {{ $availableCon }})
+                                            </option>
+                                        @endforeach
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-500 mb-1">Quantity</label>
+                                <div class="flex items-center gap-2">
+                                    <input type="number" name="items[0][quantity]" required min="1" value="1"
+                                        class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all bg-slate-50 focus:bg-white">
+                                    <button type="button" class="remove-item-btn text-rose-400 hover:text-rose-600 p-2 opacity-0 cursor-default" disabled title="Remove Item">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Quantity</label>
-                    <input type="number" name="quantity" required min="1" value="1"
-                        class="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all">
-                </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1">Expected Return Date</label>
                     <input type="date" name="expected_returned_date" required
                         min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}"
                         class="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all bg-white">
                 </div>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
-                <input type="text" name="status" value="Borrowed" readonly
-                    class="w-full px-4 py-2 bg-green-50 text-green-700 font-medium border border-green-100 cursor-not-allowed rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-green-500">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Status</label>
+                    <input type="text" name="status" value="Borrowed" readonly
+                        class="w-full px-4 py-2 bg-green-50 text-green-700 font-medium border border-green-100 cursor-not-allowed rounded-xl text-sm transition-all focus:outline-none focus:ring-2 focus:ring-green-500">
+                </div>
             </div>
 
             <div class="pt-4">
                 <button type="submit"
-                    class="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-lg shadow-green-200 hover:-translate-y-0.5 transition-all duration-200">
+                    class="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-lg shadow-green-200 hover:-translate-y-0.5 transition-all duration-200 flex justify-center items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     Submit Borrow Request
                 </button>
             </div>
@@ -152,15 +175,39 @@
     </div>
 
     <script>
-        document.getElementById('equipment_select').addEventListener('change', function () {
-            var val = this.value;
-            if (val) {
-                var parts = val.split('_');
-                document.getElementById('equipment_type').value = parts[0];
-                document.getElementById('equipment_id').value = parts[1];
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            let itemIndex = 1;
+            const container = document.getElementById('items_container');
+            const addBtn = document.getElementById('add_item_btn');
+
+            addBtn.addEventListener('click', function() {
+                // Get the first row to clone
+                const firstRow = container.querySelector('.item-row');
+                const newRow = firstRow.cloneNode(true);
+
+                // Update names
+                const select = newRow.querySelector('select');
+                select.name = `items[${itemIndex}][equipment_composite]`;
+                select.value = '';
+
+                const input = newRow.querySelector('input[type="number"]');
+                input.name = `items[${itemIndex}][quantity]`;
+                input.value = '1';
+
+                // Enable and style remove button
+                const removeBtn = newRow.querySelector('.remove-item-btn');
+                removeBtn.disabled = false;
+                removeBtn.classList.remove('opacity-0', 'cursor-default');
+                removeBtn.classList.add('cursor-pointer');
+                
+                removeBtn.addEventListener('click', function() {
+                    newRow.remove();
+                });
+
+                container.appendChild(newRow);
+                itemIndex++;
+            });
         });
     </script>
 </body>
-
 </html>

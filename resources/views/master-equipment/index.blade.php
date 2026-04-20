@@ -2,10 +2,11 @@
 
 @section('header_title', 'Master Equipment')
 
-@section('content')
+    @section('content')
+
     <!-- Top Actions -->
-    <div class="flex justify-between items-center mb-6">
-        <div class="relative w-72">
+    <div class="flex justify-between items-center mb-6 w-full gap-4">
+        <div class="relative w-72 flex-shrink-0">
             <input type="text" id="searchInput" placeholder="Search master equipment..."
                 class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all bg-white shadow-sm">
             <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -13,10 +14,17 @@
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
         </div>
+        
+        <a href="{{ route('master-equipment.print') }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors shadow-sm text-sm font-medium whitespace-nowrap">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+            </svg>
+            Print Master Equipment
+        </a>
     </div>
 
     <!-- Data Table -->
-    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden overflow-x-auto">
+    <div id="printableTable" class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden overflow-x-auto">
         <table class="w-full text-left text-sm whitespace-nowrap">
             <thead class="bg-slate-50/50 text-slate-500">
                 <tr>
