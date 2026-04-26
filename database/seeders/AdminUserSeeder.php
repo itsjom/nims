@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class AdminUserSeeder extends Seeder
 {
@@ -12,17 +14,16 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::firstOrCreate(
-            ['email' => 'admin@nims.com'], // Condition to check
+        $user = User::firstOrCreate(
+            ['email' => 'systemadmin@miis.com'], // Condition to check
             [
                 // Data to insert if the email doesn't exist
                 'name' => 'System Administrator',
                 'password' => Hash::make('Admin123!'),
-
-                // If users table has an 'is_admin' or 'role' column, add it here:
-                // 'is_admin' => true,
-                // 'role' => 'admin',
             ]
         );
+
+        // Assign the admin role to the user
+        $user->assignRole('System Admin');
     }
 }

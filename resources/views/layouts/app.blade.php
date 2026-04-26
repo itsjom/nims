@@ -96,6 +96,25 @@
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('ci-monitoring.*') ? 'text-green-600' : 'text-slate-400 group-hover:text-green-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     CI Monitoring
                 </a>
+
+                <!-- Administration Menu -->
+                @role('System Admin')
+                <p class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 mt-6 inline-block">Administration</p>
+                <a href="{{ route('users.index') }}" class="flex items-center px-4 py-3 {{ request()->routeIs('users.*') ? 'bg-green-50 text-green-700' : 'text-slate-600 hover:text-green-600' }} rounded-xl font-medium transition-all duration-200 group relative mb-1">
+                    @if(request()->routeIs('users.*'))
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-green-600 rounded-r-full"></div>
+                    @endif
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('users.*') ? 'text-green-600' : 'text-slate-400 group-hover:text-green-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    User Management
+                </a>
+                <a href="{{ route('roles.index') }}" class="flex items-center px-4 py-3 {{ request()->routeIs('roles.*') ? 'bg-green-50 text-green-700' : 'text-slate-600 hover:text-green-600' }} rounded-xl font-medium transition-all duration-200 group relative">
+                    @if(request()->routeIs('roles.*'))
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-green-600 rounded-r-full"></div>
+                    @endif
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('roles.*') ? 'text-green-600' : 'text-slate-400 group-hover:text-green-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
+                    Roles & Permissions
+                </a>
+                @endrole
             </nav>
             <div class="p-6 border-t border-slate-100">
                 <div class="flex items-center gap-3 w-full group">
