@@ -13,6 +13,11 @@
         body {
             font-family: 'Outfit', sans-serif;
         }
+
+        input::-ms-reveal,
+        input::-ms-clear {
+            display: none;
+        }
     </style>
 </head>
 
