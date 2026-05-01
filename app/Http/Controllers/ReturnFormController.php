@@ -16,8 +16,9 @@ class ReturnFormController extends Controller
         $nconMaterials = CsrNconT1::all();
         $conMaterials = CsrConT1::all();
         $borrowLogs = BorrowLog::where('status', 'Borrowed')->orderBy('borrow_id', 'desc')->get();
+        $clinicalInstructors = \App\Models\ClinicalInstructor::all();
 
-        return view('return-form.create', compact('nconMaterials', 'conMaterials', 'borrowLogs'));
+        return view('return-form.create', compact('nconMaterials', 'conMaterials', 'borrowLogs', 'clinicalInstructors'));
     }
 
     public function store(Request $request)

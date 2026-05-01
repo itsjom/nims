@@ -12,11 +12,29 @@
         body { font-family: 'Outfit', sans-serif; background-color: #f3f4f6; }
         .sidebar-scroll::-webkit-scrollbar { width: 4px; }
         .sidebar-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+        
+        @media print {
+            aside, header { display: none !important; }
+            .print\:hidden { display: none !important; }
+            body, .flex, main, .flex-1, .flex-col { 
+                height: auto !important; 
+                min-height: 0 !important;
+                overflow: visible !important; 
+                display: block !important; 
+                background: white !important;
+            }
+            .max-w-7xl { max-width: none !important; margin: 0 !important; }
+            .p-8 { padding: 0 !important; }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+        }
     </style>
 </head>
 <body class="antialiased text-slate-800">
-    <div class="flex h-screen overflow-hidden bg-slate-50">
-        <aside class="w-72 bg-white border-r border-slate-200 flex flex-col transition-all duration-300 z-20 shadow-sm relative">
+    <div class="flex h-screen overflow-hidden bg-slate-50 print:block print:h-auto print:overflow-visible print:bg-white">
+        <aside class="w-72 bg-white border-r border-slate-200 flex flex-col transition-all duration-300 z-20 shadow-sm relative print:hidden">
             <div class="h-20 flex items-center px-8 border-b border-slate-100">
                 <img src="{{ asset('images/ncf-logo.png') }}" alt="NCF Logo" class="w-12 h-12 object-contain drop-shadow-sm">
                 <span class="ml-4 text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-600 to-slate-800">MIIS</span>
@@ -78,6 +96,25 @@
                     <svg class="w-5 h-5 mr-3 {{ request()->routeIs('ci-monitoring.*') ? 'text-green-600' : 'text-slate-400 group-hover:text-green-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                     CI Monitoring
                 </a>
+
+                <!-- Administration Menu -->
+                @role('System Admin')
+                <p class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 mt-6 inline-block">Administration</p>
+                <a href="{{ route('users.index') }}" class="flex items-center px-4 py-3 {{ request()->routeIs('users.*') ? 'bg-green-50 text-green-700' : 'text-slate-600 hover:text-green-600' }} rounded-xl font-medium transition-all duration-200 group relative mb-1">
+                    @if(request()->routeIs('users.*'))
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-green-600 rounded-r-full"></div>
+                    @endif
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('users.*') ? 'text-green-600' : 'text-slate-400 group-hover:text-green-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    User Management
+                </a>
+                <a href="{{ route('roles.index') }}" class="flex items-center px-4 py-3 {{ request()->routeIs('roles.*') ? 'bg-green-50 text-green-700' : 'text-slate-600 hover:text-green-600' }} rounded-xl font-medium transition-all duration-200 group relative">
+                    @if(request()->routeIs('roles.*'))
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-green-600 rounded-r-full"></div>
+                    @endif
+                    <svg class="w-5 h-5 mr-3 {{ request()->routeIs('roles.*') ? 'text-green-600' : 'text-slate-400 group-hover:text-green-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
+                    Roles & Permissions
+                </a>
+                @endrole
             </nav>
             <div class="p-6 border-t border-slate-100">
                 <div class="flex items-center gap-3 w-full group">
@@ -98,8 +135,8 @@
             </div>
         </aside>
 
-        <main class="flex-1 flex flex-col relative overflow-hidden">
-            <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-8 z-10 sticky top-0">
+        <main class="flex-1 flex flex-col relative overflow-hidden print:overflow-visible">
+            <header class="h-20 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-8 z-10 sticky top-0 print:hidden">
                 <div class="flex items-center space-x-4">
                     <h1 class="text-2xl font-bold text-slate-800 leading-tight">@yield('header_title', 'Dashboard')</h1>
                 </div>
@@ -111,7 +148,7 @@
                 </div>
             </header>
             
-            <div class="flex-1 overflow-auto p-8 bg-slate-50/50">
+            <div class="flex-1 overflow-auto p-8 bg-slate-50/50 print:overflow-visible print:p-0 print:bg-white">
                 <div class="max-w-7xl mx-auto">
                     @yield('content')
                 </div>
