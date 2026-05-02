@@ -60,7 +60,10 @@ class BorrowFormController extends Controller
             ];
         }
 
-        // Execution phase: decrement supply and create logs
+        // Execution phase: decrement supply and collect names/quantities
+        $equipmentNames = [];
+        $totalQuantity = 0;
+
         foreach ($itemsToProcess as $item) {
             $material = $item['material'];
             
@@ -68,19 +71,22 @@ class BorrowFormController extends Controller
             $material->supply_on_hand -= $item['quantity'];
             $material->save();
 
-            // Save into BorrowLog
-            BorrowLog::create([
-                'student_name' => $request->student_name,
-                'contact_info' => $request->contact_info,
-                'clinical_instructor' => $request->clinical_instructor,
-                'procedure' => 'N/A', // Removed from form, keeping fallback for DB schema
-                'equipment' => $item['name'],
-                'quantity' => $item['quantity'],
-                'status' => 'Borrowed',
-                'date_borrowed' => Carbon::today(),
-                'expected_returned_date' => $request->expected_returned_date,
-            ]);
+            $equipmentNames[] = $item['name'] . ' (x' . $item['quantity'] . ')';
+            $totalQuantity += $item['quantity'];
         }
+
+        // Save into BorrowLog as a single entry
+        BorrowLog::create([
+            'student_name' => $request->student_name,
+            'contact_info' => $request->contact_info,
+            'clinical_instructor' => $request->clinical_instructor,
+            'procedure' => 'N/A', // Removed from form, keeping fallback for DB schema
+            'equipment' => implode("\n", $equipmentNames),
+            'quantity' => $totalQuantity,
+            'status' => 'Borrowed',
+            'date_borrowed' => Carbon::today(),
+            'expected_returned_date' => $request->expected_returned_date,
+        ]);
 
         return redirect()->back()->with('success', 'Borrow request submitted successfully!');
     }

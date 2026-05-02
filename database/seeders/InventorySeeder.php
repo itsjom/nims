@@ -13,8 +13,8 @@ class InventorySeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\CsrConT1::factory(50)->create();
-        \App\Models\CsrNconT1::factory(50)->create();
-        \App\Models\BorrowLog::factory(50)->create();
+        \App\Models\CsrConT1::factory(30)->create();
+        \App\Models\CsrNconT1::factory(30)->create();
+        \App\Models\BorrowLog::factory(30)->create();
     }
 }

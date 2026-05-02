@@ -40,7 +40,7 @@
                         </td>
                         <td class="px-5 py-4 font-semibold text-slate-800">{{ $log->student_name }}</td>
                         <td class="px-5 py-4 text-slate-600">{{ $log->clinical_instructor }}</td>
-                        <td class="px-5 py-4 font-medium text-green-700">{{ $log->equipment }}</td>
+                        <td class="px-5 py-4 font-medium text-green-700 whitespace-normal">{!! nl2br(e($log->equipment)) !!}</td>
                         <td class="px-5 py-4 text-center font-bold text-slate-700">{{ $log->quantity }}</td>
                         <td class="px-5 py-4 text-slate-600 font-medium">
                             {{ $log->expected_returned_date ? $log->expected_returned_date->format('M d, Y') : '-' }}

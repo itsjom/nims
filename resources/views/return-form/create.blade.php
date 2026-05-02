@@ -103,53 +103,31 @@
                 </div>
             </div>
 
-            <div class="bg-green-50/50 p-4 rounded-xl border border-green-100/50 space-y-4">
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1.5 ml-1">Equipment Name <span
-                            class="text-rose-500">*</span></label>
-                    <select name="equipment_composite" id="equipment_select" required
-                        class="w-full px-4 py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all cursor-pointer shadow-sm pointer-events-none bg-slate-50">
-                        <option value="" disabled selected>Auto-selected based on Borrow Record</option>
-                        <optgroup label="CSR-NCON Materials">
-                            @foreach($nconMaterials as $ncon)
-                                <option value="NCON_{{ $ncon->id }}">
-                                    {{ $ncon->item_name }} (Code: {{ $ncon->item_code }})
-                                </option>
-                            @endforeach
-                        </optgroup>
-                        <optgroup label="CSR-CON Materials">
-                            @foreach($conMaterials as $con)
-                                <option value="CON_{{ $con->id }}">
-                                    {{ $con->item_name }} (Code: {{ $con->item_code }})
-                                </option>
-                            @endforeach
-                        </optgroup>
-                    </select>
-                    <!-- Hidden inputs to submit to standard controller methods -->
-                    <input type="hidden" name="equipment_type" id="equipment_type">
-                    <input type="hidden" name="equipment_id" id="equipment_id">
-                    <p class="text-xs text-slate-500 mt-1.5 ml-1 tracking-wide">Must match the borrowed equipment to
-                        properly restore stock.</p>
-                </div>
+            <!-- Hidden select to store master equipment list for JS parsing -->
+            <div class="hidden">
+                <select id="equipment_select">
+                    <option value="" disabled selected>Auto-selected based on Borrow Record</option>
+                    <optgroup label="CSR-NCON Materials">
+                        @foreach($nconMaterials as $ncon)
+                            <option value="NCON_{{ $ncon->id }}">
+                                {{ $ncon->item_name }} (Code: {{ $ncon->item_code }})
+                            </option>
+                        @endforeach
+                    </optgroup>
+                    <optgroup label="CSR-CON Materials">
+                        @foreach($conMaterials as $con)
+                            <option value="CON_{{ $con->id }}">
+                                {{ $con->item_name }} (Code: {{ $con->item_code }})
+                            </option>
+                        @endforeach
+                    </optgroup>
+                </select>
+            </div>
 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5 ml-1">Quantity Returned <span
-                                class="text-rose-500">*</span></label>
-                        <input type="number" name="quantity_returned" required min="1" value="1"
-                            class="w-full px-4 py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all shadow-sm">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5 ml-1">Condition Details <span
-                                class="text-rose-500">*</span></label>
-                        <select name="condition" required
-                            class="w-full px-4 py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all cursor-pointer shadow-sm">
-                            <option value="Good" selected>Good / Intact</option>
-                            <option value="Damaged">Damaged / Broken</option>
-                            <option value="Fair">Fair / With Wear</option>
-                            <option value="Missing Parts">Missing Parts</option>
-                        </select>
-                    </div>
+            <!-- Dynamic container for borrowed items -->
+            <div id="return_items_container" class="space-y-4">
+                <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 text-center text-slate-500 text-sm">
+                    Select a borrow record to display items.
                 </div>
             </div>
 
@@ -186,35 +164,155 @@
     </div>
 
     <script>
+        let globalItemIndex = 0;
+
+        function addSplitRow(btn) {
+            let container = btn.closest('.splits-container');
+            
+            // Get data from the first row
+            let firstRow = container.querySelector('.split-row');
+            let type = firstRow.querySelector('input[name$="[equipment_type]"]').value;
+            let id = firstRow.querySelector('input[name$="[equipment_id]"]').value;
+            let itemName = firstRow.querySelector('input[name$="[name]"]').value;
+            let maxQty = parseInt(firstRow.querySelector('input[type="number"]').getAttribute('max'));
+
+            // Calculate how much qty is already assigned
+            let inputs = container.querySelectorAll('.qty-input');
+            let assignedQty = 0;
+            inputs.forEach(inp => {
+                assignedQty += parseInt(inp.value) || 0;
+            });
+
+            let remainingQty = maxQty - assignedQty;
+            if (remainingQty <= 0) {
+                alert('Total borrowed quantity already allocated. Please reduce existing quantities first.');
+                return;
+            }
+
+            let html = `
+                <div class="grid grid-cols-[1fr_1fr_auto] gap-4 items-end mt-3 pt-3 border-t border-slate-100 split-row">
+                    <input type="hidden" name="items[${globalItemIndex}][equipment_type]" value="${type}">
+                    <input type="hidden" name="items[${globalItemIndex}][equipment_id]" value="${id}">
+                    <input type="hidden" name="items[${globalItemIndex}][name]" value="${itemName}">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1 ml-1">Return Qty <span class="text-rose-500">*</span></label>
+                        <input type="number" name="items[${globalItemIndex}][quantity_returned]" required min="1" max="${maxQty}" value="${remainingQty}" class="qty-input w-full px-4 py-2 bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all shadow-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 mb-1 ml-1">Condition Details <span class="text-rose-500">*</span></label>
+                        <select name="items[${globalItemIndex}][condition]" required class="w-full px-4 py-2 bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all cursor-pointer shadow-sm">
+                            <option value="Good" selected>Good / Intact</option>
+                            <option value="Damaged">Damaged / Broken</option>
+                            <option value="Fair">Fair / With Wear</option>
+                            <option value="Missing Parts">Missing Parts</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button type="button" onclick="this.closest('.split-row').remove();" class="p-2 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg transition-colors" title="Remove condition split">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+            globalItemIndex++;
+        }
+
         document.getElementById('borrow_id_select').addEventListener('change', function () {
             var selectedOption = this.options[this.selectedIndex];
-            var equipmentName = selectedOption.getAttribute('data-equipment');
+            var equipmentNameStr = selectedOption.getAttribute('data-equipment');
+            
+            var container = document.getElementById('return_items_container');
+            container.innerHTML = ''; // clear previous
+
+            if (!equipmentNameStr) {
+                container.innerHTML = '<div class="bg-slate-50 p-6 rounded-xl border border-slate-200 text-center text-slate-500 text-sm">Select a borrow record to display items.</div>';
+                return;
+            }
 
             var eqSelect = document.getElementById('equipment_select');
             var options = eqSelect.options;
 
-            let found = false;
-            for (var i = 0; i < options.length; i++) {
-                if (options[i].value === "") continue;
+            var items = equipmentNameStr.split('\n');
 
-                if (options[i].text.includes(equipmentName)) {
-                    options[i].style.display = 'block';
-                    options[i].disabled = false;
-                    options[i].hidden = false;
-                    eqSelect.selectedIndex = i;
-                    var parts = options[i].value.split('_');
-                    document.getElementById('equipment_type').value = parts[0];
-                    document.getElementById('equipment_id').value = parts[1];
-                    found = true;
-                } else {
-                    options[i].style.display = 'none';
-                    options[i].disabled = true;
-                    options[i].hidden = true;
+            items.forEach(function(itemStr) {
+                itemStr = itemStr.trim();
+                if (!itemStr) return;
+
+                var match = itemStr.match(/(.+?)\s*\(x(\d+)\)$/);
+                var itemName = itemStr;
+                var borrowedQty = 1;
+
+                if (match) {
+                    itemName = match[1].trim();
+                    borrowedQty = parseInt(match[2], 10);
                 }
-            }
 
-            if (!found) {
-                eqSelect.selectedIndex = 0;
+                var type = '';
+                var id = '';
+
+                for (var i = 0; i < options.length; i++) {
+                    if (options[i].value === "") continue;
+                    var optionBaseName = options[i].text.split(' (Code:')[0].trim();
+                    if (itemName === optionBaseName) {
+                        var parts = options[i].value.split('_');
+                        type = parts[0];
+                        id = parts[1];
+                        break;
+                    }
+                }
+
+                if (type && id) {
+                    var html = `
+                        <div class="bg-green-50/50 p-4 rounded-xl border border-green-100/50 space-y-4">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label class="block text-sm font-semibold text-slate-700 ml-1">Equipment Name</label>
+                                <span class="text-xs font-semibold text-green-700 bg-green-100 px-2 py-1 rounded-md">Borrowed: ${borrowedQty}</span>
+                            </div>
+                            <div>
+                                <input type="text" value="${itemName}" readonly class="w-full px-4 py-2.5 bg-slate-100/70 border border-slate-200 rounded-xl text-sm text-slate-600 font-medium cursor-not-allowed">
+                            </div>
+                            
+                            <div class="splits-container bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-semibold text-slate-500">Return Allocation</span>
+                                    <button type="button" onclick="addSplitRow(this)" class="text-xs font-medium text-green-600 hover:text-green-700 flex items-center gap-1 bg-green-50 px-2 py-1 rounded-md transition-colors hover:bg-green-100">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                        Add Condition
+                                    </button>
+                                </div>
+                                
+                                <div class="grid grid-cols-[1fr_1fr_auto] gap-4 items-end split-row">
+                                    <input type="hidden" name="items[${globalItemIndex}][equipment_type]" value="${type}">
+                                    <input type="hidden" name="items[${globalItemIndex}][equipment_id]" value="${id}">
+                                    <input type="hidden" name="items[${globalItemIndex}][name]" value="${itemName}">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-500 mb-1 ml-1">Return Qty <span class="text-rose-500">*</span></label>
+                                        <input type="number" name="items[${globalItemIndex}][quantity_returned]" required min="1" max="${borrowedQty}" value="${borrowedQty}" class="qty-input w-full px-4 py-2 bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-500 mb-1 ml-1">Condition Details <span class="text-rose-500">*</span></label>
+                                        <select name="items[${globalItemIndex}][condition]" required class="w-full px-4 py-2 bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-all cursor-pointer shadow-sm">
+                                            <option value="Good" selected>Good / Intact</option>
+                                            <option value="Damaged">Damaged / Broken</option>
+                                            <option value="Fair">Fair / With Wear</option>
+                                            <option value="Missing Parts">Missing Parts</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <div class="w-9 h-9"></div> <!-- Empty space for alignment -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', html);
+                    globalItemIndex++;
+                }
+            });
+
+            if (globalItemIndex === 0) {
+                container.innerHTML = '<div class="bg-rose-50 p-4 rounded-xl border border-rose-200 text-rose-600 text-sm">Could not parse any equipment from this record.</div>';
             }
         });
     </script>
